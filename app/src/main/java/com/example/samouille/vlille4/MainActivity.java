@@ -1,11 +1,14 @@
 package com.example.samouille.vlille4;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -110,24 +113,38 @@ public class MainActivity extends AppCompatActivity {
     private void loadIntoListView(String json) throws JSONException {
         JSONObject jsonObjet = new JSONObject(json);
         JSONArray records = jsonObjet.getJSONArray("records");
+
+        String[] listNom = new String[records.length()];
         String[] listAdresses = new String[records.length()];
+
         int[] listNbPlaces = new int[records.length()];
         int[] listNbVelos = new int[records.length()];
         String[] listCommunes = new String[records.length()];
         double[] listLatitude = new double[records.length()];
         double[] listLongitude = new double[records.length()];
+
         for (int i = 0; i < records.length(); i++) {
             JSONObject obj = records.getJSONObject(i);
             JSONObject fields = obj.getJSONObject("fields");
+
             listAdresses[i] = fields.getString("adresse");
+            listNom[i] = fields.getString("nom");
             listNbPlaces[i] = fields.getInt("nbPlacesDispo");
             listNbVelos[i] = fields.getInt("nbVelosDispo");
             listCommunes[i] = fields.getString("commune");
             JSONArray geo = fields.getJSONArray("geo");
             listLatitude[i]=geo.getDouble(0);
             listLongitude[i]=geo.getDouble(1);
+            Log.d("myTag", listNom[i]);
         }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listAdresses);
-        listView.setAdapter(arrayAdapter);
-    }
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                R.layout.view, listNom);
+        listView.setAdapter(adapter);
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this,R.layout.view, R.id.TvAdresse, listAdresses);
+        listView.setAdapter(arrayAdapter2);
+
+        ImageView image = (ImageView) findViewById(R.id.img);
+        image.setImageResource(R.drawable.checkvert);
+
+            }
 }
