@@ -2,6 +2,7 @@ package com.example.samouille.vlille4;
 
 public class VLille {
     private int id;
+    private String nom;
     private String adresse;
     private String commune;
     private int nbPlacesDispo;
@@ -9,8 +10,9 @@ public class VLille {
     private double latitude;
     private double longitude;
 
-    public VLille(int id, String adresse, String commune, int nbPlacesDispo, int nbVelosDispo, double latitude, double longitude) {
+    public VLille(int id,String nom, String adresse, String commune, int nbPlacesDispo, int nbVelosDispo, double latitude, double longitude) {
         this.id=id;
+        this.nom=nom;
         this.adresse = adresse;
         this.commune = commune;
         this.nbPlacesDispo = nbPlacesDispo;
@@ -25,6 +27,14 @@ public class VLille {
 
     public void setId(int id){
         this.id=id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public String getAdresse() {
