@@ -1,10 +1,16 @@
 package com.example.samouille.vlille4;
 
+import android.content.Context;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                Toast.makeText(MainActivity.this,"Json is downloading",Toast.LENGTH_SHORT).show();
             }
 
             //this method will be called after execution
@@ -59,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 try {
                     loadIntoListView(s);
                 } catch (JSONException e) {
@@ -113,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
     private void loadIntoListView(String json) throws JSONException {
         JSONObject jsonObjet = new JSONObject(json);
         JSONArray records = jsonObjet.getJSONArray("records");
+        l = records.length();
+
         String[] listAdresses = new String[records.length()];
         String[] listNom = new String[records.length()];
         String[] listCommunes = new String[records.length()];
@@ -120,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
         int[] listNbVelos = new int[records.length()];
         double[] listLatitude = new double[records.length()];
         double[] listLongitude = new double[records.length()];
-        for (int i = 0; i < records.length(); i++) {
+
+        for (int i = 0; i < l; i++) {
             JSONObject obj = records.getJSONObject(i);
             JSONObject fields = obj.getJSONObject("fields");
             listNom[i] = fields.getString("nom");
@@ -129,12 +138,16 @@ public class MainActivity extends AppCompatActivity {
             listNbPlaces[i] = fields.getInt("nbPlacesDispo");
             listNbVelos[i] = fields.getInt("nbVelosDispo");
             JSONArray geo = fields.getJSONArray("geo");
+            listLongitude[i] = geo.getDouble(1);
             listLatitude[i]=geo.getDouble(0);
             listLongitude[i]=geo.getDouble(1);
             VLille v = new VLille(0,listNom[i],listAdresses[i],listCommunes[i],listNbVelos[i],listNbPlaces[i],listLatitude[i],listLongitude[i]);
             db.addVlille(v);
         }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listAdresses);
+
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.view, R.id.TvNom, listNom);
         listView.setAdapter(arrayAdapter);
     }
+      
 }
+
