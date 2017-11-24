@@ -1,11 +1,16 @@
 package com.example.samouille.vlille4;
 
+import android.content.Context;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -115,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadIntoListView(String json) throws JSONException {
         JSONObject jsonObjet = new JSONObject(json);
         JSONArray records = jsonObjet.getJSONArray("records");
-        l =records.length();
+        l = records.length();
 
         String[] listAdresses = new String[records.length()];
         String[] listNom = new String[records.length()];
@@ -135,14 +140,13 @@ public class MainActivity extends AppCompatActivity {
             listNbPlaces[i] = fields.getInt("nbPlacesDispo");
             listNbVelos[i] = fields.getInt("nbVelosDispo");
             JSONArray geo = fields.getJSONArray("geo");
-            listLatitude[i]=geo.getDouble(0);
-            listLongitude[i]=geo.getDouble(1);
+            listLatitude[i] = geo.getDouble(0);
+            listLongitude[i] = geo.getDouble(1);
         }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.view, R.id.TvNom, listNom);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.view, R.id.TvNom, listNom);
         listView.setAdapter(arrayAdapter);
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this, R.layout.view, R.id.TvAdresse, listAdresses);
-        listView.setAdapter(arrayAdapter2);
     }
+      
 }
 
