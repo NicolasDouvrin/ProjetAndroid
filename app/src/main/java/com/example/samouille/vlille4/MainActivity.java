@@ -1,14 +1,12 @@
 package com.example.samouille.vlille4;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +20,8 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     ListView listView;
+    VLille v;
+    int l;VLilleManager m = new VLilleManager(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listView);
         getJSON("https://opendata.lillemetropole.fr/api/records/1.0/search/?dataset=vlille-realtime&rows=222&facet=libelle&facet=nom&facet=commune");
+
     }
 
 
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                Toast.makeText(MainActivity.this,"Json is downloading",Toast.LENGTH_SHORT).show();
             }
 
             //this method will be called after execution
@@ -113,38 +115,34 @@ public class MainActivity extends AppCompatActivity {
     private void loadIntoListView(String json) throws JSONException {
         JSONObject jsonObjet = new JSONObject(json);
         JSONArray records = jsonObjet.getJSONArray("records");
+        l =records.length();
 
-        String[] listNom = new String[records.length()];
         String[] listAdresses = new String[records.length()];
-
+        String[] listNom = new String[records.length()];
+        String[] listCommunes = new String[records.length()];
         int[] listNbPlaces = new int[records.length()];
         int[] listNbVelos = new int[records.length()];
-        String[] listCommunes = new String[records.length()];
         double[] listLatitude = new double[records.length()];
         double[] listLongitude = new double[records.length()];
 
-        for (int i = 0; i < records.length(); i++) {
+        for (int i = 0; i < l; i++) {
             JSONObject obj = records.getJSONObject(i);
             JSONObject fields = obj.getJSONObject("fields");
 
             listAdresses[i] = fields.getString("adresse");
             listNom[i] = fields.getString("nom");
+            listCommunes[i] = fields.getString("commune");
             listNbPlaces[i] = fields.getInt("nbPlacesDispo");
             listNbVelos[i] = fields.getInt("nbVelosDispo");
-            listCommunes[i] = fields.getString("commune");
             JSONArray geo = fields.getJSONArray("geo");
             listLatitude[i]=geo.getDouble(0);
             listLongitude[i]=geo.getDouble(1);
-            Log.d("myTag", listNom[i]);
         }
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.view, listNom);
-        listView.setAdapter(adapter);
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this,R.layout.view, R.id.TvAdresse, listAdresses);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.view, R.id.TvNom, listNom);
+        listView.setAdapter(arrayAdapter);
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this, R.layout.view, R.id.TvAdresse, listAdresses);
         listView.setAdapter(arrayAdapter2);
-
-        ImageView image = (ImageView) findViewById(R.id.img);
-        image.setImageResource(R.drawable.checkvert);
-
-            }
+    }
 }
+
