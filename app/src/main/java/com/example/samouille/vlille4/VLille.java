@@ -1,5 +1,6 @@
 package com.example.samouille.vlille4;
 
+
 public class VLille {
     // Labels table name
     public static final String TABLE = "Vlille";

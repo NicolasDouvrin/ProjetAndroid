@@ -1,12 +1,15 @@
 package com.example.samouille.vlille4;
 
+import android.app.Activity;
+import android.app.ListActivity;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -17,24 +20,32 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
 
-    ListView listView;
-    MySQLiteHelper db = new MySQLiteHelper(this);
+public class MainActivity extends Activity {
+
+    TextView vlille_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        listView = (ListView) findViewById(R.id.listView);
-        getJSON("https://opendata.lillemetropole.fr/api/records/1.0/search/?dataset=vlille-realtime&rows=100&facet=libelle&facet=nom&facet=commune");
+        ListView listView;
 
     }
 
+    public void onClick(View view) {
+        VlilleRepo repo = new VlilleRepo(this);
+        if(ConnexionInternet.isConnectedInternet(MainActivity.this))
+        {
+            getJSON("https://opendata.lillemetropole.fr/api/records/1.0/search/?dataset=vlille-realtime&rows=100&facet=libelle&facet=nom&facet=commune");
+        }
+        ArrayList<HashMap<String, String>> vlilleList =  repo.getVlilleList();
 
-    //this method is actually fetching the json string
+    }
+
     private void getJSON(final String urlWebService) {
         /*
         * As fetching the json string is a network operation
@@ -61,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 try {
-                    loadIntoListView(s);
+                    InsertIntoDb(s);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -71,9 +83,6 @@ public class MainActivity extends AppCompatActivity {
             //in this method we are fetching the json string
             @Override
             protected String doInBackground(Void... voids) {
-
-
-
                 try {
                     //creating a URL
                     URL url = new URL(urlWebService);
@@ -102,41 +111,52 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     return null;
                 }
-
             }
         }
-
         //creating asynctask object and executing it
         GetJSON getJSON = new GetJSON();
         getJSON.execute();
     }
 
-    private void loadIntoListView(String json) throws JSONException {
+    private void InsertIntoDb(String json) throws JSONException {
+        VlilleRepo repo = new VlilleRepo(this);
+        VLille v = new VLille();
         JSONObject jsonObjet = new JSONObject(json);
         JSONArray records = jsonObjet.getJSONArray("records");
-        String[] listAdresses = new String[records.length()];
-        String[] listNom = new String[records.length()];
-        String[] listCommunes = new String[records.length()];
-        int[] listNbPlaces = new int[records.length()];
-        int[] listNbVelos = new int[records.length()];
-        double[] listLatitude = new double[records.length()];
-        double[] listLongitude = new double[records.length()];
         for (int i = 0; i < records.length(); i++) {
             JSONObject obj = records.getJSONObject(i);
             JSONObject fields = obj.getJSONObject("fields");
-            listNom[i] = fields.getString("nom");
-            listAdresses[i] = fields.getString("adresse");
-            listCommunes[i] = fields.getString("commune");
-            listNbPlaces[i] = fields.getInt("nbPlacesDispo");
-            listNbVelos[i] = fields.getInt("nbVelosDispo");
+            v.id = 0;
+            v.nom = fields.getString("nom");
+            v.commune = fields.getString("adresse");
+            v.adresse = fields.getString("commune");
+            v.nbVelosDispo = fields.getInt("nbPlacesDispo");
+            v.nbPlacesDispo = fields.getInt("nbVelosDispo");
             JSONArray geo = fields.getJSONArray("geo");
-            listLatitude[i]=geo.getDouble(0);
-            listLongitude[i]=geo.getDouble(1);
+            v.latitude =geo.getDouble(0);
+            v.longitude=geo.getDouble(1);
+            repo.insert(v);
         }
-
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.view, R.id.TvNom, listNom);
-        listView.setAdapter(arrayAdapter);
-        listView.setAdapter(new ArrayAdapter<String>(
-                this, R.layout.view,R.id.TvCommune, listCommunes));
     }
 }
+
+        /*** FAIRE UN GETVIEW pour adapter les listes dans la listview et la view***/
+
+
+        /***  POUR AFFICHER LES IMAGES EN FONCTION DES STATIONS
+         *
+         * if(listNbPlaces==0){
+         * if(listNbVelos==0){
+         * Image = (ImageView) findViewById(R.id.checkvert);
+         * } else {
+         * Image = (ImageView) findViewById(R.id.checkjaune);
+         * } } else {
+         * if(listNbVelos==0){
+         * Image = (ImageView) findViewById(R.id.checkjaune);
+         * } else{
+         * Image = (ImageView) findViewById(R.id.checkvert);
+         * }}
+         *
+         *
+         ***/
+
