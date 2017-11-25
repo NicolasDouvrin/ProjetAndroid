@@ -147,6 +147,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.view, R.id.TvNom, listNom);
         listView.setAdapter(arrayAdapter);
     }
-      
+
 }
 
