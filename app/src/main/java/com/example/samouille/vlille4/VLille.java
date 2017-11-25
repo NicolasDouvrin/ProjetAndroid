@@ -1,87 +1,26 @@
 package com.example.samouille.vlille4;
 
 public class VLille {
-    private int id;
-    private String nom;
-    private String adresse;
-    private String commune;
-    private int nbPlacesDispo;
-    private int nbVelosDispo;
-    private double latitude;
-    private double longitude;
+    // Labels table name
+    public static final String TABLE = "Vlille";
 
-    public VLille(int id,String nom, String adresse, String commune, int nbPlacesDispo, int nbVelosDispo, double latitude, double longitude) {
-        this.id=id;
-        this.nom=nom;
-        this.adresse = adresse;
-        this.commune = commune;
-        this.nbPlacesDispo = nbPlacesDispo;
-        this.nbVelosDispo = nbVelosDispo;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
+    // Labels Table Columns names
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NOM = "nom";
+    public static final String COLUMN_COMMUNE = "commune";
+    public static final String COLUMN_ADRESSE = "adresse";
+    public static final String COLUMN_NBVELOSDISPO = "nbVelosDispo";
+    public static final String COLUMN_NBPLACESDISPO = "nbPlacesDispo";
+    public static final String COLUMN_LATITUDE = "latitude";
+    public static final String COLUMN_LONGITUDE = "longitude";
 
-    public Integer getId(){
-        return id;
-    }
-
-    public void setId(int id){
-        this.id=id;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getAdresse() {
-        return adresse;
-    }
-
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
-
-    public String getCommune() {
-        return commune;
-    }
-
-    public void setCommune(String commune) {
-        this.commune = commune;
-    }
-
-    public int getNbPlacesDispo() {
-        return nbPlacesDispo;
-    }
-
-    public void setNbPlacesDispo(int nbPlacesDispo) {
-        this.nbPlacesDispo = nbPlacesDispo;
-    }
-
-    public int getNbVelosDispo() {
-        return nbVelosDispo;
-    }
-
-    public void setNbVelosDispo(int nbVelosDispo) {
-        this.nbVelosDispo = nbVelosDispo;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
+    // property help us to keep data
+    public int id;
+    public String nom;
+    public String commune;
+    public String adresse;
+    public int nbVelosDispo;
+    public int nbPlacesDispo;
+    public double latitude;
+    public double longitude;
 }

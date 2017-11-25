@@ -4,7 +4,9 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         listView = (ListView) findViewById(R.id.listView);
-        getJSON("https://opendata.lillemetropole.fr/api/records/1.0/search/?dataset=vlille-realtime&rows=222&facet=libelle&facet=nom&facet=commune");
+        getJSON("https://opendata.lillemetropole.fr/api/records/1.0/search/?dataset=vlille-realtime&rows=100&facet=libelle&facet=nom&facet=commune");
 
     }
 
@@ -59,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 try {
                     loadIntoListView(s);
                 } catch (JSONException e) {
@@ -131,10 +132,11 @@ public class MainActivity extends AppCompatActivity {
             JSONArray geo = fields.getJSONArray("geo");
             listLatitude[i]=geo.getDouble(0);
             listLongitude[i]=geo.getDouble(1);
-            VLille v = new VLille(0,listNom[i],listAdresses[i],listCommunes[i],listNbVelos[i],listNbPlaces[i],listLatitude[i],listLongitude[i]);
-            db.addVlille(v);
         }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listAdresses);
+
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.view, R.id.TvNom, listNom);
         listView.setAdapter(arrayAdapter);
+        listView.setAdapter(new ArrayAdapter<String>(
+                this, R.layout.view,R.id.TvCommune, listCommunes));
     }
 }
